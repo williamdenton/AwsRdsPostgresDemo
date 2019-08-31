@@ -7,6 +7,7 @@ namespace WilliamDenton.AwsRdsPostgresDemo.Models
 
 	interface IDemoReadWriteDbContext
 	{
+		DbSet<Customer> Customers { get; }
 
 		int SaveChanges(bool acceptAllChangesOnSuccess);
 

@@ -8,10 +8,12 @@ namespace WilliamDenton.AwsRdsPostgresDemo.Models
 {
 	interface IDemoReadOnlyDbContext
 	{
+		IQueryable<Customer> Customers { get; }
 	}
 
 	public class DemoReadOnlyDbContext : DemoDbContext, IDemoReadOnlyDbContext
 	{
+		IQueryable<Customer> IDemoReadOnlyDbContext.Customers => Customers.AsQueryable();
 
 		public DemoReadOnlyDbContext(DbContextOptions<DemoReadOnlyDbContext> options)
 			: base(options)

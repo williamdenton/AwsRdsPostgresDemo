@@ -5,6 +5,7 @@ namespace WilliamDenton.AwsRdsPostgresDemo.Models
 {
 	public abstract class DemoDbContext : DbContext
 	{
+		public DbSet<Customer> Customers { get; set; }
 
 		protected DemoDbContext(DbContextOptions options) : base(options) { }
 
