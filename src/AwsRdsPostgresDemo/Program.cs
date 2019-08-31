@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AwsRdsPostgresDemo
+namespace WilliamDenton.AwsRdsPostgresDemo
 {
     class Program
     {
