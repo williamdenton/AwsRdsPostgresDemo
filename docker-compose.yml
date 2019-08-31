@@ -1,0 +1,8 @@
+version: '3.2'
+services:
+  postgres:
+    build: ./docker/postgres/
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
