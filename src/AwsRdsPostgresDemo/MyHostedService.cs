@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WilliamDenton.AwsRdsPostgresDemo.Models;
 using NodaTime;
 
 namespace WilliamDenton.AwsRdsPostgresDemo
@@ -46,9 +47,11 @@ namespace WilliamDenton.AwsRdsPostgresDemo
 					shutdownToken.ThrowIfCancellationRequested();
 
 					using var scope = _scopeFactory.CreateScope();
+					var dbContext = scope.ServiceProvider.GetRequiredService<IDemoReadWriteDbContext>();
+					var roDbContext = scope.ServiceProvider.GetRequiredService<IDemoReadOnlyDbContext>();
 					var clock = scope.ServiceProvider.GetRequiredService<IClock>();
 					try {
-						await DoWork(clock);
+						await DoWork(dbContext, roDbContext, clock);
 					} catch (Exception e) {
 						Console.WriteLine(e);
 					} finally {
@@ -61,10 +64,20 @@ namespace WilliamDenton.AwsRdsPostgresDemo
 			}
 		}
 
-		Task DoWork(IClock clock)
+		async Task DoWork(IDemoReadWriteDbContext rwDbContext, IDemoReadOnlyDbContext roDbContext, IClock clock)
 		{
-			Console.WriteLine($"Hello world {clock.GetCurrentInstant().ToString()}");
-			return Task.CompletedTask;
+			var c = new Customer {
+				Name = Guid.NewGuid().ToString(),
+				CustomerCode = Guid.NewGuid().ToString().Substring(0, 10),
+				CreatedOn = clock.GetCurrentInstant()
+			};
+			rwDbContext.Customers.Add(c);
+
+			await rwDbContext.SaveChangesAsync();
+			Console.WriteLine($"Inserted Customer Id { c.Id}");
+
+			var customerCount = roDbContext.Customers.Count();
+			Console.WriteLine($"there are {customerCount} customers");
 		}
 	}
 }
