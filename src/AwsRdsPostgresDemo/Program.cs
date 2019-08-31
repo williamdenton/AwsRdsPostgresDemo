@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using Npgsql;
+using WilliamDenton.AwsRdsPostgresDemo.Models;
 
 namespace WilliamDenton.AwsRdsPostgresDemo
 {
@@ -38,8 +39,31 @@ namespace WilliamDenton.AwsRdsPostgresDemo
 
 		static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
 		{
+			ConfigureDbContext(hostContext, services);
 			services.AddSingleton<IClock>(p => SystemClock.Instance);
 			services.AddSingleton(p => p.GetService<IConfiguration>().GetSection(nameof(AppOptions)).Get<AppOptions>());
+		}
+
+		static void ConfigureDbContext(HostBuilderContext hostContext, IServiceCollection services)
+		{
+			var dbMigrator = hostContext.Configuration.GetConnectionString("DemoDbContextMigrator") ?? throw new ArgumentNullException("DemoDbContextMigrator");
+			var dbWrite = hostContext.Configuration.GetConnectionString("DemoDbContextReadWrite") ?? throw new ArgumentNullException("DemoDbContextReadWrite");
+			var dbRead = hostContext.Configuration.GetConnectionString("DemoDbContextReadOnly") ?? throw new ArgumentNullException("DemoDbContextReadOnly");
+
+			services.AddEntityFrameworkNpgsql()
+				.AddDbContext<DemoMigratorDbContext>(ef => ConfigureDbContextOptions(ef, dbMigrator))
+				.AddDbContext<DemoReadWriteDbContext>(ef => ConfigureDbContextOptions(ef, dbWrite))
+				.AddDbContext<DemoReadOnlyDbContext>(ef => ConfigureDbContextOptions(ef, dbRead));
+
+			// local setup function for our db contexts above
+			static void ConfigureDbContextOptions(DbContextOptionsBuilder efOptions, string connectionString)
+			{
+				efOptions.UseNpgsql(connectionString, npgsqlOptions => {
+					npgsqlOptions.UseNodaTime();
+				});
+			}
+			services.AddScoped<IDemoReadWriteDbContext>(provider => provider.GetService<DemoReadWriteDbContext>());
+			services.AddScoped<IDemoReadOnlyDbContext>(provider => provider.GetService<DemoReadOnlyDbContext>());
 		}
 		}
 	}
