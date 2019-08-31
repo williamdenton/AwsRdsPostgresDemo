@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,6 +17,8 @@ namespace WilliamDenton.AwsRdsPostgresDemo
 		static async Task Main()
 		{
 			var host = BuildHost();
+
+			MigrateDbOnStartup(host);
 
 			await host.RunAsync();
 		}
@@ -65,6 +68,17 @@ namespace WilliamDenton.AwsRdsPostgresDemo
 			services.AddScoped<IDemoReadWriteDbContext>(provider => provider.GetService<DemoReadWriteDbContext>());
 			services.AddScoped<IDemoReadOnlyDbContext>(provider => provider.GetService<DemoReadOnlyDbContext>());
 		}
+
+		static void MigrateDbOnStartup(IHost host)
+		{
+			var options = host.Services.GetService<AppOptions>();
+			if (options.MigrateDatabaseOnStartUp) {
+				using var dbContext = host.Services.GetService<DemoMigratorDbContext>();
+				var database = dbContext.Database;
+				if (database.GetPendingMigrations().Any()) {
+					database.Migrate();
+				}
+			}
 		}
 	}
 }
