@@ -62,6 +62,7 @@ namespace WilliamDenton.AwsRdsPostgresDemo
 			static void ConfigureDbContextOptions(DbContextOptionsBuilder efOptions, string connectionString)
 			{
 				efOptions.UseNpgsql(connectionString, npgsqlOptions => {
+					npgsqlOptions.UseAwsIamAuthentication();
 					npgsqlOptions.UseNodaTime();
 				});
 			}

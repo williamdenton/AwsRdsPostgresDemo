@@ -7,14 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.0.0-preview8.19405.11" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.0.0-preview8.19405.4" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.0-preview8" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime" Version="3.0.0-preview8" />
+    <PackageReference Include="AWSSDK.RDS" Version="3.3.108.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.0.0-preview9.19423.6" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.0.0-preview9.19423.4" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.0-preview9" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime" Version="3.0.0-preview9" /> 
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0-preview8.19405.11">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0-preview9.19423.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
