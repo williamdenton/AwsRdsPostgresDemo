@@ -1,5 +1,23 @@
 version: '3.2'
 services:
+  demo:
+    build:
+      context: ./src/AwsRdsPostgresDemo
+      args:
+        APP_VERSION: "1.2.3-compose"
+    links:
+      - postgres
+    environment:
+      DOTNET_ENVIRONMENT: "development"
+      ConnectionStrings__DemoDbContextMigrator: "User ID=demo_migrator;Host=postgres;Port=5432;Database=demo;password=demo_migrator123"
+      ConnectionStrings__DemoDbContextReadWrite: "User ID=demo_readwrite;Host=postgres;Port=5432;Database=demo;"
+      ConnectionStrings__DemoDbContextReadOnly: "User ID=demo_readonly;Host=postgres;Port=5432;Database=demo;"
+
+      #if we turn off managed debugging in the container we can make it run with a readonly filesystem
+      #https://github.com/dotnet/coreclr/blob/master/Documentation/building/debugging-instructions.md#disabling-managed-attachdebugging
+      COMPlus_EnableDiagnostics: 0
+    read_only: true
+
   postgres:
     build: ./docker/postgres/
     ports:
