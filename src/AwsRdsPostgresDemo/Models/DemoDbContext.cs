@@ -12,7 +12,6 @@ namespace WilliamDenton.AwsRdsPostgresDemo.Models
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
-			modelBuilder.UseSnakeCaseNames();
 
 			modelBuilder.Entity<Customer>()
 				.HasIndex(payment => payment.CustomerCode)

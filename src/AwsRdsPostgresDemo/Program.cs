@@ -65,6 +65,7 @@ namespace WilliamDenton.AwsRdsPostgresDemo
 					npgsqlOptions.UseAwsIamAuthentication();
 					npgsqlOptions.UseNodaTime();
 				});
+				efOptions.UseSnakeCaseNamingConventions();
 			}
 			services.AddScoped<IDemoReadWriteDbContext>(provider => provider.GetService<DemoReadWriteDbContext>());
 			services.AddScoped<IDemoReadOnlyDbContext>(provider => provider.GetService<DemoReadOnlyDbContext>());
